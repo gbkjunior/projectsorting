@@ -1,0 +1,14 @@
+eval "javac src/Demo/*.java"
+read -rsp $'Press enter to continue...\n'
+eval "java bin/Demo.CreateStorageMain"
+eval "java bin/Demo.ScanDataAndPopulateRelation"
+read -rsp $'Press enter to continue...\n'
+eval "java bin/Demo.PrintRelation1"
+read -rsp $'Press enter to continue...\n'
+eval "java bin/Demo.ProcessRelation1"
+read -rsp $'Press enter to continue...\n'
+eval "java bin/Demo.PrintRelation2"
+read -rsp $'Press enter to continue...\n'
+eval "java bin/Demo.ProcessRelation2”
+read -rsp $'Press enter to continue...\n'
+eval "java bin/Demo.PrintRelation3”
