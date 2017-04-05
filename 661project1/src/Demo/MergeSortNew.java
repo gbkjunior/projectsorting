@@ -5,6 +5,7 @@ import java.nio.ByteBuffer;
 import PTCFramework.ConsumerIterator;
 import StorageManager.Storage;
 
+
 public class MergeSortNew{
 	
 	byte[] runBufferOne = null;
@@ -20,6 +21,8 @@ public class MergeSortNew{
         consiter.open();
         
         createRuns(1024,startpage,numPages);
+        
+        SortMergeIters iter = new SortMergeIters(startpage,numPages);
 
 	}
 	
@@ -27,6 +30,9 @@ public class MergeSortNew{
 		int noOfPages = pageSize/1024;
 		
 		for(int i=0; i<numPages; i=i+3){
+			runBufferOne = null;
+			runBufferTwo = null;
+			runBufferThree = null;
 			callRunBufferOne(startpage,noOfPages);
 			
 			if(i+1 < numPages){
