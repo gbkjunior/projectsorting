@@ -84,9 +84,11 @@ public class TestPages{
 			}
 		}
 		System.out.println(numPages);
-		MergeSortProcess proc = new MergeSortProcess(numPages,numPages,numPages);
+		//MergeSortProcess proc = new MergeSortProcess(numPages,numPages,numPages);
 		
-		GetTupleFromRelationIterator iter = new GetTupleFromRelationIterator("myDiskMine",35,8);
+		MergeSortNew proc = new MergeSortNew(numPages,numPages);
+		
+		GetTupleFromRelationIterator iter = new GetTupleFromRelationIterator("myDiskMine",35,proc.getLastSortPage(numPages));
 		iter.open();
 		while(iter.hasNext()){
 			byte [] tuple = iter.next();
