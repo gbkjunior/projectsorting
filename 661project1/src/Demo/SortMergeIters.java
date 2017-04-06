@@ -19,24 +19,24 @@ public class SortMergeIters{
 	int noOfPageTwo;
 	
 	Storage s;
-	ConsumerIterator<byte []> consiter = new PutTupleInRelationIterator(35,"myDiskMine");
+	ConsumerIterator<byte []> consiter;
 	
 	public SortMergeIters(int startpage, int numPages) throws Exception{
 		//createIters(1024*3,)
 		s = new Storage();
         s.LoadStorage("myDiskMine");
-        consiter.open();
         
-        finalindex = 33;
-        createIters(1024*3,22,11);
+        finalindex = startpage + numPages;
+        createIters(3, startpage,numPages);
 	}
 	
-	public void createIters(int pageSize, int startpage, int numPages) throws Exception{
-		int noOfpages = pageSize/1024;
+	public void createIters(int noOfpages, int startpage, int numPages) throws Exception{
 		
-	/*	int iter = 6;
+		int iter = 6;
 		
-		while(iter <= numPages){
+		while(iter <= numPages + 1){
+			consiter = new PutTupleInRelationIterator(35,"myDiskMine");
+			consiter.open();
 			for(int i=0; i<numPages; i=i+iter){
 				inputBufferOne = null;
 				inputBufferTwo = null;
@@ -51,24 +51,11 @@ public class SortMergeIters{
 				startpage = startpage + 2 * noOfpages;
 			}
 			
+			startpage = finalindex;
 			noOfpages = noOfpages * 2;
-			iter = iter + (numPages % iter);
-		} */
-		
-		for(int i=0; i<numPages; i=i+6){
-			inputBufferOne = null;
-			inputBufferTwo = null;
-			
-			callInBuffOne(startpage,noOfpages);
-			
-			if(i+noOfpages < numPages){
-				callInBuffTwo(startpage+noOfpages,noOfpages);
-			}
-			
-			merge();
-			startpage = startpage + 2 * noOfpages;
-		}
-		
+			finalindex = finalindex + 11;
+			iter = iter * 2;
+		} 
 	}
 	
 	public boolean isBuffer(byte[] buffer){
@@ -164,6 +151,14 @@ public class SortMergeIters{
 		
 	}
 	
+	public int getLastSortPage(int numPages){
+		int page = 0;
+		page = (int) s.getLastAllocated();
+		page = page + 1;
+		page = page - numPages;
+		return page;
+	}
+	
 	public void mergeOne(byte[] buff, int readBytes, int item) throws Exception{
 		int bufferCount;
 		byte[] inBuffTuple = new byte[4];
@@ -226,7 +221,7 @@ public class SortMergeIters{
 		inBuffTwoindex = i;
 		noOfPageTwo = noOfpages;
 		
-		System.out.println("inside CallInBuffTwo - " + inBuffTwoindex + " " + noOfPageTwo);
+		//System.out.println("inside CallInBuffTwo - " + inBuffTwoindex + " " + noOfPageTwo);
 		
 		noOfPageTwo = noOfpages;
 		if(noOfPageTwo > 0 && inBuffTwoindex < finalindex){
@@ -244,7 +239,7 @@ public class SortMergeIters{
 		inBuffOneindex = startpage;
 		noOfPageOne = noOfpages;
 		
-		System.out.println("inside CallInBuffONe - " + inBuffOneindex + " " + noOfPageOne);
+		//System.out.println("inside CallInBuffONe - " + inBuffOneindex + " " + noOfPageOne);
 		if(noOfPageOne > 0 && inBuffOneindex < finalindex){
 			    s.ReadPage(inBuffOneindex,inputBufferOne );
 		}

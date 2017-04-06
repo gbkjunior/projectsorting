@@ -83,27 +83,10 @@ public class TestPages{
 				relationConsumerIterator.next(fill);
 			}
 		}
-		System.out.println(numPages);
-		//MergeSortProcess proc = new MergeSortProcess(numPages,numPages,numPages);
-		
-	/*	byte[] buff = new byte[1024];
-		s1.DeAllocatePage(0);
-		s1.DeAllocatePage(1);
-		s1.DeAllocatePage(2);
-		s1.DeAllocatePage(3);
-		s1.DeAllocatePage(4);
-		s1.DeAllocatePage(5);
-		
-		s1.AllocatePage();
-		//s1.ReadPage(2, buff);
-		//s1.WritePage(0, buff);
-		//s1.ReadPage(0, buff);
-		System.out.println(s1.getnumDeAllocated());
-		
-		System.out.println(s1.getLastAllocated()); */
+	
 		MergeSortNew proc = new MergeSortNew(numPages,numPages); 
 		
-		GetTupleFromRelationIterator iter = new GetTupleFromRelationIterator("myDiskMine",35,33);
+		GetTupleFromRelationIterator iter = new GetTupleFromRelationIterator("myDiskMine",35, proc.getLastSortPage(numPages));
 		iter.open();
 		while(iter.hasNext()){
 			byte [] tuple = iter.next();

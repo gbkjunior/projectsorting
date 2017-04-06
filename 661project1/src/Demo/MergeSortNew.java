@@ -22,6 +22,7 @@ public class MergeSortNew{
         
         createRuns(1024,startpage,numPages);
         
+        startpage = getLastSortPage(numPages);
         SortMergeIters iter = new SortMergeIters(startpage,numPages);
 
 	}
