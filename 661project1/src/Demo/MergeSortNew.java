@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 
 import PTCFramework.ConsumerIterator;
 import StorageManager.Storage;
+import Tuple.Tuple;
 
 
 public class MergeSortNew{
@@ -11,6 +12,8 @@ public class MergeSortNew{
 	byte[] runBufferOne = null;
 	byte[] runBufferTwo = null;
 	byte[] runBufferThree = null;
+	
+	Tuple t = new Tuple();
 	
 	Storage s;
 	ConsumerIterator<byte []> consiter = new PutTupleInRelationIterator(35,"myDiskMine");
@@ -117,18 +120,33 @@ public class MergeSortNew{
 			bufferTwoCount = ByteBuffer.wrap(inBuffTupleTwo).getInt();
 			bufferThreeCount = ByteBuffer.wrap(inBuffTupleThree).getInt();
 			
-			for(int l=0; l<4; l++){
+			/*for(int l=0; l<4; l++){
 				inBuffTupleOne[l] = runBufferOne[readBytesOne+l];
 				inBuffTupleTwo[l] = runBufferTwo[readBytesTwo+l];
 				inBuffTupleThree[l] = runBufferThree[readBytesThree+l];
-			}
+			} */
+			
+			inBuffTupleOne = new byte[35];
+			inBuffTupleTwo = new byte[35];
+			inBuffTupleThree = new byte[35];
+			
+			for(int l=0; l<35; l++){
+				inBuffTupleOne[l] = runBufferOne[readBytesOne+l];
+				inBuffTupleTwo[l] = runBufferTwo[readBytesTwo+l];
+				inBuffTupleThree[l] = runBufferThree[readBytesThree+l];
+			} 
 			
 			while(true){
-				int keyOne = ByteBuffer.wrap(inBuffTupleOne).getInt();
+				/*int keyOne = ByteBuffer.wrap(inBuffTupleOne).getInt();
 				int keyTwo = ByteBuffer.wrap(inBuffTupleTwo).getInt();
-				int keyThree = ByteBuffer.wrap(inBuffTupleThree).getInt();
+				int keyThree = ByteBuffer.wrap(inBuffTupleThree).getInt();  */
 				
-				if(keyOne < keyTwo && keyOne < keyThree){
+				int keyOnekeyTwo = t.compare(inBuffTupleOne, inBuffTupleTwo);
+				int keyOnekeyThree = t.compare(inBuffTupleOne, inBuffTupleThree);
+				int keyTwokeyOne = t.compare(inBuffTupleTwo, inBuffTupleOne);
+				int keyTwokeyThree = t.compare(inBuffTupleTwo, inBuffTupleThree);
+				
+				if((keyOnekeyTwo == -1 || keyOnekeyTwo == 0) && (keyOnekeyThree == -1 || keyOnekeyThree == 0)){
 					for(int l=0; l<35; l++){
 						outputBuffer[l] = runBufferOne[readBytesOne+l];
 					}
@@ -136,7 +154,7 @@ public class MergeSortNew{
 					readBytesOne = readBytesOne+35;
 				}
 				else{
-					if(keyTwo < keyOne && keyTwo < keyThree){
+					if((keyTwokeyOne == -1 || keyTwokeyOne == 0) && (keyTwokeyThree == -1 || keyTwokeyThree == 0)){
 						for(int l=0; l<35; l++){
 							outputBuffer[l] = runBufferTwo[readBytesTwo+l];
 						}
@@ -170,7 +188,7 @@ public class MergeSortNew{
 						break;
 				}
 				
-				for(int l=0; l<4; l++){
+				for(int l=0; l<35; l++){
 					inBuffTupleOne[l] = runBufferOne[readBytesOne+l];
 					inBuffTupleTwo[l] = runBufferTwo[readBytesTwo+l];
 					inBuffTupleThree[l] = runBufferThree[readBytesThree+l];
@@ -202,6 +220,9 @@ public class MergeSortNew{
 		bufferCountOne = ByteBuffer.wrap(inBuffTupOne).getInt();
 		bufferCountTwo = ByteBuffer.wrap(inBuffTupTwo).getInt();
 		
+		inBuffTupOne = new byte[35];
+		inBuffTupTwo = new byte[35];
+		
 		while(true){
 			if(readBytesOne >= (bufferCountOne * 35)+8){
 				mergeOne(buffTwo,readBytesTwo);
@@ -213,15 +234,17 @@ public class MergeSortNew{
 				break;
 			}
 			
-			for(int l=0; l<4; l++){
+			for(int l=0; l<35; l++){
 				inBuffTupOne[l] = buffOne[readBytesOne+l];
 				inBuffTupTwo[l] = buffTwo[readBytesTwo+l];
 			}
 			
-			int keyOne = ByteBuffer.wrap(inBuffTupOne).getInt();
-			int keyTwo = ByteBuffer.wrap(inBuffTupTwo).getInt();
+			/*int keyOne = ByteBuffer.wrap(inBuffTupOne).getInt();
+			int keyTwo = ByteBuffer.wrap(inBuffTupTwo).getInt(); */
 			
-			if(keyOne < keyTwo){
+			int keyOnekeyTwo = t.compare(inBuffTupOne, inBuffTupTwo);
+			
+			if(keyOnekeyTwo == -1 || keyOnekeyTwo == 0){
 				for(int l=0 ; l<35; l++){
 					outputBuffer[l] = buffOne[readBytesOne+l];
 				}
@@ -248,6 +271,8 @@ public class MergeSortNew{
 		}
 		
 		bufferCount = ByteBuffer.wrap(inBuffTuple).getInt();
+		
+		inBuffTuple = new byte[35];
 		
 		while(readBytes < (bufferCount * 35)+8){
 			for(int l=0; l<35; l++){

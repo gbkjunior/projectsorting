@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 
 import PTCFramework.ConsumerIterator;
 import StorageManager.Storage;
+import Tuple.Tuple;
 
 public class SortMergeIters{
 	byte[] inputBufferOne = null;
@@ -17,6 +18,8 @@ public class SortMergeIters{
 	
 	int noOfPageOne;
 	int noOfPageTwo;
+	
+	Tuple t = new Tuple();
 	
 	Storage s;
 	ConsumerIterator<byte []> consiter;
@@ -87,6 +90,9 @@ public class SortMergeIters{
 			bufferCountOne = ByteBuffer.wrap(inBuffTupOne).getInt();
 			bufferCountTwo = ByteBuffer.wrap(inBuffTupTwo).getInt();
 			
+			inBuffTupOne = new byte[35];
+			inBuffTupTwo = new byte[35];
+			
 			while(true){
 				if(readBytesOne >= (bufferCountOne * 35)+8){
 					inputBufferOne = null;
@@ -120,15 +126,17 @@ public class SortMergeIters{
 					}
 				}
 				
-				for(int l=0; l<4; l++){
+				for(int l=0; l<35; l++){
 					inBuffTupOne[l] = inputBufferOne[readBytesOne+l];
 					inBuffTupTwo[l] = inputBufferTwo[readBytesTwo+l];
 				}
 				
-				int keyOne = ByteBuffer.wrap(inBuffTupOne).getInt();
-				int keyTwo = ByteBuffer.wrap(inBuffTupTwo).getInt();
+				/*int keyOne = ByteBuffer.wrap(inBuffTupOne).getInt();
+				int keyTwo = ByteBuffer.wrap(inBuffTupTwo).getInt(); */
 				
-				if(keyOne < keyTwo){
+				int keyOnekeyTwo = t.compare(inBuffTupOne, inBuffTupTwo);
+				
+				if(keyOnekeyTwo == -1 || keyOnekeyTwo == 0){
 					for(int l=0 ; l<35; l++){
 						outputBuffer[l] = inputBufferOne[readBytesOne+l];
 					}

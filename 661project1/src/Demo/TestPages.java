@@ -2,6 +2,7 @@ package Demo;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import PTCFramework.ConsumerIterator;
 import PTCFramework.PTCFramework;
 import PTCFramework.ProducerIterator;
 import StorageManager.Storage;
+import Tuple.Tuple;
 
 public class TestPages{
 	public static void main(String[] args) throws Exception{
@@ -18,6 +20,8 @@ public class TestPages{
 		ConsumerIterator<byte []> relationConsumerIterator = new PutTupleInRelationIterator(35,"myDiskMine");
 		PTCFramework<byte[],byte[]> fileToRelationFramework= new TextFileToRelationPTC(textFileProducerIterator, relationConsumerIterator);
 		fileToRelationFramework.run();
+		
+		Tuple t = new Tuple();
 		
 		int numPages = relationConsumerIterator.getNumAllocated();
 		
@@ -38,22 +42,44 @@ public class TestPages{
 			int bytesread = 8;
 			
 			for(int i=0 ; i<count; i++){
-				byte[] key = new byte[4];
-				byte[] val = new byte[31];
+				//byte[] key = new byte[4];
+				byte[] val = new byte[35];
 				
-				for(int j=0; j<4; j++){
+				/*for(int j=0; j<4; j++){
 					key[j] = page[bytesread+j];
+				} */
+				
+				for(int j=0; j<35; j++){
+					val[j] = page[bytesread+j];
 				}
 				
-				for(int j=0; j<31; j++){
-					val[j] = page[bytesread+4+j];
-				}
+				byte[] key = val;
+				
 				bytesread = bytesread + 35;
 				Bytenode bytenode = new Bytenode(key,val);
 				byteList.add(bytenode);
 			}
 			
 			byteList.sort(new Comparator<Bytenode>(){
+
+				@Override
+				public int compare(Bytenode o1, Bytenode o2) {
+					byte[] keyo1 = o1.key;
+					byte[] keyo2 = o2.key;
+					
+					//System.out.println(Arrays.toString(keyo1) + " - " + keyo1.length + " || " + Arrays.toString(keyo2) + " - " + keyo2.length); 
+					
+					return t.compare(keyo1, keyo2);
+				}
+				
+			});
+			
+			for(Bytenode e : byteList){
+				byte[] fill = e.val;
+				relationConsumerIterator.next(fill);
+			} 
+			
+		/*	byteList.sort(new Comparator<Bytenode>(){
 
 				@Override
 				public int compare(Bytenode o1, Bytenode o2) {
@@ -81,18 +107,19 @@ public class TestPages{
 				}
 				
 				relationConsumerIterator.next(fill);
-			}
-		}
+			} */ 
+		} 
 	
 		MergeSortNew proc = new MergeSortNew(numPages,numPages); 
 		
 		GetTupleFromRelationIterator iter = new GetTupleFromRelationIterator("myDiskMine",35, proc.getLastSortPage(numPages));
+		//GetTupleFromRelationIterator iter = new GetTupleFromRelationIterator("myDiskMine",35, 11);
 		iter.open();
 		while(iter.hasNext()){
 			byte [] tuple = iter.next();
 			System.out.println(new String(toInt(tuple, 0)+", "+new String(tuple).substring(4, 27)+", "+ new String(tuple).substring(27,31)+", "+ toInt(tuple, 31)));
 		}  
-	}
+	} 
 	
 	private static int toInt(byte[] bytes, int offset) {
 		  int ret = 0;
