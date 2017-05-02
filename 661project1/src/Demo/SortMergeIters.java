@@ -14,6 +14,8 @@ public class SortMergeIters{
 	int inBuffOneindex;
 	int inBuffTwoindex;
 	
+	int numBuffer;
+	
 	int finalindex;
 	
 	int noOfPageOne;
@@ -24,18 +26,20 @@ public class SortMergeIters{
 	Storage s;
 	ConsumerIterator<byte []> consiter;
 	
-	public SortMergeIters(int startpage, int numPages) throws Exception{
+	public SortMergeIters(int startpage, int numPages, int numBuffer) throws Exception{
 		//createIters(1024*3,)
 		s = new Storage();
         s.LoadStorage("myDiskMine");
         
+        this.numBuffer = numBuffer;
+        
         finalindex = startpage + numPages;
-        createIters(3, startpage,numPages);
+        createIters(numBuffer, startpage,numPages);
 	}
 	
 	public void createIters(int noOfpages, int startpage, int numPages) throws Exception{
 		
-		int iter = 6;
+		int iter = noOfpages * 2;
 		
 		while(iter <= numPages + 1){
 			consiter = new PutTupleInRelationIterator(35,"myDiskMine");
@@ -56,8 +60,9 @@ public class SortMergeIters{
 			
 			startpage = finalindex;
 			noOfpages = noOfpages * 2;
-			finalindex = finalindex + 11;
+			finalindex = finalindex + numPages;
 			iter = iter * 2;
+			s.printStats();
 		} 
 	}
 	

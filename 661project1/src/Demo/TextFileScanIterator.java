@@ -27,7 +27,7 @@ public class TextFileScanIterator implements ProducerIterator<byte []>{
 
 	@Override
 	public void open() throws Exception {
-		file= new File("/Users/geethanjalijeevanatham/Desktop/Project1/Project1src/Demo/Emp.txt");
+		file= new File("/Users/geethanjalijeevanatham/Desktop/data.txt");
 		in=new Scanner(file);
 	}
 

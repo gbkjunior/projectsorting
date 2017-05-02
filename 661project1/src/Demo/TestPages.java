@@ -1,5 +1,7 @@
 package Demo;
 
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,12 +16,18 @@ import Tuple.Tuple;
 
 public class TestPages{
 	public static void main(String[] args) throws Exception{
+		
+		long startTime = System.nanoTime();
+		//code
+		 
+		
 		Storage s1 = new Storage();
-		s1.CreateStorage("myDiskMine", 1024, 1024*100);
+		s1.CreateStorage("myDiskMine", 1024, 1024*2500);
 		ProducerIterator<byte []> textFileProducerIterator= new TextFileScanIterator();
 		ConsumerIterator<byte []> relationConsumerIterator = new PutTupleInRelationIterator(35,"myDiskMine");
 		PTCFramework<byte[],byte[]> fileToRelationFramework= new TextFileToRelationPTC(textFileProducerIterator, relationConsumerIterator);
 		fileToRelationFramework.run();
+		s1.printStats();
 		
 		Tuple t = new Tuple();
 		
@@ -78,47 +86,27 @@ public class TestPages{
 				byte[] fill = e.val;
 				relationConsumerIterator.next(fill);
 			} 
-			
-		/*	byteList.sort(new Comparator<Bytenode>(){
-
-				@Override
-				public int compare(Bytenode o1, Bytenode o2) {
-					int keyo1 = ByteBuffer.wrap(o1.key).getInt();
-					int keyo2 = ByteBuffer.wrap(o2.key).getInt();
-					
-					if(keyo1 > keyo2)
-						return 1;
-					else if(keyo1 < keyo2)
-						 return -1;
-					return 0;
-				}
-				
-			});
-			
-			for(Bytenode e : byteList){
-				byte[] fill = new byte[35];
-				
-				for(int i=0; i<4; i++){
-					fill[i] = e.key[i];
-				}
-				
-				for(int i=0; i<31; i++){
-					fill[i+4] = e.val[i];
-				}
-				
-				relationConsumerIterator.next(fill);
-			} */ 
 		} 
-	
-		MergeSortNew proc = new MergeSortNew(numPages,numPages); 
+		
+		System.out.println(relationConsumerIterator.getNumAllocated());
+		
+		s1.printStats();
+		
+		CreateRuns proc = new CreateRuns(5,numPages,numPages);
 		
 		GetTupleFromRelationIterator iter = new GetTupleFromRelationIterator("myDiskMine",35, proc.getLastSortPage(numPages));
-		//GetTupleFromRelationIterator iter = new GetTupleFromRelationIterator("myDiskMine",35, 11);
+		//GetTupleFromRelationIterator iter = new GetTupleFromRelationIterator("myDiskMine",35, 330);
 		iter.open();
+		PrintStream out = new PrintStream(new FileOutputStream("/Users/geethanjalijeevanatham/Desktop/output.txt"));
+		System.setOut(out);
 		while(iter.hasNext()){
 			byte [] tuple = iter.next();
-			System.out.println(new String(toInt(tuple, 0)+", "+new String(tuple).substring(4, 27)+", "+ new String(tuple).substring(27,31)+", "+ toInt(tuple, 31)));
+			out.println(new String(toInt(tuple, 0)+", "+new String(tuple).substring(4, 27)+", "+ new String(tuple).substring(27,31)+", "+ toInt(tuple, 31)));
+			//System.out.println(new String(toInt(tuple, 0)+", "+new String(tuple).substring(4, 27)+", "+ new String(tuple).substring(27,31)+", "+ toInt(tuple, 31)));
 		}  
+		
+		long endTime = System.nanoTime();
+		System.out.println("Took "+(endTime - startTime) + " ns"); 
 	} 
 	
 	private static int toInt(byte[] bytes, int offset) {
