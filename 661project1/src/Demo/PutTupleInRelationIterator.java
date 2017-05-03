@@ -58,7 +58,7 @@ public class PutTupleInRelationIterator implements ConsumerIterator<byte []>{
 				buffer[4+i]= nextPage[i];
 			}
 			storage.WritePage(currentpage, buffer);
-			System.out.println("The first page of this relation is: "+currentpage);
+			//System.out.println("The first page of this relation is: "+currentpage);
 			initialFirstPage = currentpage;
 		}
 		

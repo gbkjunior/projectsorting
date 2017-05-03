@@ -28,13 +28,12 @@ public class CreateRuns{
 		this.startpage = startpage;
 		s.LoadStorage("myDiskMine");
 		consiter.open();
-		System.out.println("CreateRuns - " + consiter.getNumAllocated());
 		
-		System.out.println(numBuffers + " - " + numPages + " - " + startpage);
+		System.out.println("First Step - Create Runs - Available Buffers : "+numBuffers);
+		System.out.println("Processing Pass - 1 "+"no: of Pages read - "+numPages+" no of Pages written - "+numPages);
+		System.out.println();
 		
 		run();
-		s.printStats();
-		System.out.println("CreateRuns - " + consiter.getNumAllocated());
 		SortMergeIters iter = new SortMergeIters(getLastSortPage(numPages),numPages,numBuffers);
 		
 	}
@@ -50,7 +49,6 @@ public class CreateRuns{
 		for(int i=0; i<numBuffers; i++){
 			if(j<numPages){
 				s.ReadPage(startpage+j, byteMatrix[i]);
-				//printByteContent(byteMatrix[i]);
 				j=j+1;
 			}
 			else{
@@ -67,7 +65,6 @@ public class CreateRuns{
 	}
 	
 	public void printByteContent(byte[] content){
-		System.out.println(" - ??? - ");
 		byte[] count = new byte[4];
 		for(int i=0;i<4;i++){
 			count[i] = content[i];

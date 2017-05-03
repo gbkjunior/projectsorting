@@ -18,8 +18,6 @@ public class TestPages{
 	public static void main(String[] args) throws Exception{
 		
 		long startTime = System.nanoTime();
-		//code
-		 
 		
 		Storage s1 = new Storage();
 		s1.CreateStorage("myDiskMine", 1024, 1024*2500);
@@ -27,7 +25,6 @@ public class TestPages{
 		ConsumerIterator<byte []> relationConsumerIterator = new PutTupleInRelationIterator(35,"myDiskMine");
 		PTCFramework<byte[],byte[]> fileToRelationFramework= new TextFileToRelationPTC(textFileProducerIterator, relationConsumerIterator);
 		fileToRelationFramework.run();
-		s1.printStats();
 		
 		Tuple t = new Tuple();
 		
@@ -50,12 +47,7 @@ public class TestPages{
 			int bytesread = 8;
 			
 			for(int i=0 ; i<count; i++){
-				//byte[] key = new byte[4];
 				byte[] val = new byte[35];
-				
-				/*for(int j=0; j<4; j++){
-					key[j] = page[bytesread+j];
-				} */
 				
 				for(int j=0; j<35; j++){
 					val[j] = page[bytesread+j];
@@ -75,8 +67,6 @@ public class TestPages{
 					byte[] keyo1 = o1.key;
 					byte[] keyo2 = o2.key;
 					
-					//System.out.println(Arrays.toString(keyo1) + " - " + keyo1.length + " || " + Arrays.toString(keyo2) + " - " + keyo2.length); 
-					
 					return t.compare(keyo1, keyo2);
 				}
 				
@@ -88,21 +78,15 @@ public class TestPages{
 			} 
 		} 
 		
-		System.out.println(relationConsumerIterator.getNumAllocated());
-		
-		s1.printStats();
-		
-		CreateRuns proc = new CreateRuns(5,numPages,numPages);
+		CreateRuns proc = new CreateRuns(10,numPages,numPages);
 		
 		GetTupleFromRelationIterator iter = new GetTupleFromRelationIterator("myDiskMine",35, proc.getLastSortPage(numPages));
-		//GetTupleFromRelationIterator iter = new GetTupleFromRelationIterator("myDiskMine",35, 330);
 		iter.open();
 		PrintStream out = new PrintStream(new FileOutputStream("/Users/geethanjalijeevanatham/Desktop/output.txt"));
 		System.setOut(out);
 		while(iter.hasNext()){
 			byte [] tuple = iter.next();
 			out.println(new String(toInt(tuple, 0)+", "+new String(tuple).substring(4, 27)+", "+ new String(tuple).substring(27,31)+", "+ toInt(tuple, 31)));
-			//System.out.println(new String(toInt(tuple, 0)+", "+new String(tuple).substring(4, 27)+", "+ new String(tuple).substring(27,31)+", "+ toInt(tuple, 31)));
 		}  
 		
 		long endTime = System.nanoTime();

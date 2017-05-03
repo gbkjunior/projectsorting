@@ -28,6 +28,7 @@ public class SortMergeIters{
 	
 	public SortMergeIters(int startpage, int numPages, int numBuffer) throws Exception{
 		//createIters(1024*3,)
+		System.out.println("Merge Phase");
 		s = new Storage();
         s.LoadStorage("myDiskMine");
         
@@ -40,6 +41,7 @@ public class SortMergeIters{
 	public void createIters(int noOfpages, int startpage, int numPages) throws Exception{
 		
 		int iter = noOfpages * 2;
+		int count = 1;
 		
 		while(iter <= numPages + 1){
 			consiter = new PutTupleInRelationIterator(35,"myDiskMine");
@@ -62,7 +64,8 @@ public class SortMergeIters{
 			noOfpages = noOfpages * 2;
 			finalindex = finalindex + numPages;
 			iter = iter * 2;
-			s.printStats();
+			count++;
+			System.out.println("Processing Pass - "+count+" no. of Pages read - "+numPages+" no. of Pages written - "+numPages);
 		} 
 	}
 	
@@ -136,8 +139,6 @@ public class SortMergeIters{
 					inBuffTupTwo[l] = inputBufferTwo[readBytesTwo+l];
 				}
 				
-				/*int keyOne = ByteBuffer.wrap(inBuffTupOne).getInt();
-				int keyTwo = ByteBuffer.wrap(inBuffTupTwo).getInt(); */
 				
 				int keyOnekeyTwo = t.compare(inBuffTupOne, inBuffTupTwo);
 				
@@ -234,8 +235,6 @@ public class SortMergeIters{
 		inBuffTwoindex = i;
 		noOfPageTwo = noOfpages;
 		
-		//System.out.println("inside CallInBuffTwo - " + inBuffTwoindex + " " + noOfPageTwo);
-		
 		noOfPageTwo = noOfpages;
 		if(noOfPageTwo > 0 && inBuffTwoindex < finalindex){
 			   s.ReadPage(inBuffTwoindex,inputBufferTwo );
@@ -251,8 +250,7 @@ public class SortMergeIters{
 		inputBufferOne = new byte[1024];
 		inBuffOneindex = startpage;
 		noOfPageOne = noOfpages;
-		
-		//System.out.println("inside CallInBuffONe - " + inBuffOneindex + " " + noOfPageOne);
+
 		if(noOfPageOne > 0 && inBuffOneindex < finalindex){
 			    s.ReadPage(inBuffOneindex,inputBufferOne );
 		}
