@@ -1,4 +1,4 @@
-package edu.iastate.phi.tuple;
+package Tuple;
 
 public class TestTuple {
 	public static void main(String[] args){

@@ -1,4 +1,4 @@
-package edu.iastate.phi.tuple;
+package Tuple;
 
 import java.io.File;
 import java.util.ArrayList;
