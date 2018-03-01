@@ -15,8 +15,7 @@ import StorageManager.Storage;
 import Tuple.Tuple;
 
 public class TestPages{
-	public static void main(String[] args) throws Exception{
-		
+	public static void main(String[] args) throws Exception{		
 		long startTime = System.nanoTime();
 		
 		Storage s1 = new Storage();
@@ -29,7 +28,7 @@ public class TestPages{
 		Tuple t = new Tuple();
 		
 		int numPages = relationConsumerIterator.getNumAllocated();
-		
+		System.out.println("num pages:" + numPages );
 		GetPageFromRelationIterator getpagefromrelationiter = new GetPageFromRelationIterator("myDiskMine",0);
 		getpagefromrelationiter.open();
 		
@@ -78,11 +77,11 @@ public class TestPages{
 			} 
 		} 
 		
-		CreateRuns proc = new CreateRuns(10,numPages,numPages);
+		CreateRuns proc = new CreateRuns(3,numPages,numPages);
 		
 		GetTupleFromRelationIterator iter = new GetTupleFromRelationIterator("myDiskMine",35, proc.getLastSortPage(numPages));
 		iter.open();
-		PrintStream out = new PrintStream(new FileOutputStream("/Users/geethanjalijeevanatham/Desktop/output.txt"));
+		PrintStream out = new PrintStream(new FileOutputStream("C:/Users/vijay/workspace/SortingCC/projectsorting/661project1/src/output.txt"));
 		System.setOut(out);
 		while(iter.hasNext()){
 			byte [] tuple = iter.next();

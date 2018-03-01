@@ -17,7 +17,10 @@ public class TextFileScanIterator implements ProducerIterator<byte []>{
 	@Override
 	public byte [] next() {
 		count++;
+		//System.out.println("next returns :"+in.nextLine());
 		return in.nextLine().getBytes();
+		
+		
 	}
 
 	@Override
@@ -27,7 +30,7 @@ public class TextFileScanIterator implements ProducerIterator<byte []>{
 
 	@Override
 	public void open() throws Exception {
-		file= new File("/Users/geethanjalijeevanatham/Desktop/data.txt");
+		file= new File("C:/Users/vijay/workspace/SortingCC/projectsorting/661project1/src/Emp_sample.txt");
 		in=new Scanner(file);
 	}
 

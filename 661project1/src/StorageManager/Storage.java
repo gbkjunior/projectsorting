@@ -27,6 +27,8 @@ public class Storage{
 		}
 		//Allocating 16 extra bytes in the beginning for storage of parameters such as pagesize.
 		this.bitMapSize=this.bitMapSize+16;
+		
+		System.out.println("bitmap size: "+ this.bitMapSize);
 		this.file= new RandomAccessFile(this.fileName, "rw");
 		file.seek(0);
 		//Write the pagesize to the first 4 bytes in the file.
@@ -35,7 +37,7 @@ public class Storage{
 		//Write number of pages to the next 4 bytes in the file
 		file.seek(4);
 		file.writeInt(this.numPages);
-		
+		System.out.println("num pages:" + this.numPages);
 		file.seek(0);
 		
 		this.fileSize=this.fileSize+this.bitMapSize;
@@ -56,10 +58,11 @@ public class Storage{
 		this.file= new RandomAccessFile(fileName, "rw");
 		
 		this.fileSize=file.length();
-		
+		System.out.println("fileSize:" + this.fileSize );
 		//Read bytes 4 to 7 which we used to store the number of pages
 		file.seek(4);
 		this.numPages= file.readInt();
+		System.out.println("numpages:" + this.numPages);
 		this.fileName=fileName;
 		
 		//Read the first 4 bytes of the file which we used to store the page size while creating the storage.
@@ -73,7 +76,7 @@ public class Storage{
 			this.bitMapSize = (this.bitMapSize/16+1)*16;
 		}
 		this.bitMapSize=this.bitMapSize+16;
-		
+		System.out.println("load storage bitmap size:" + this.bitMapSize);
 		
 		this.numAllocated=0;
 		this.numDeallocated=0;

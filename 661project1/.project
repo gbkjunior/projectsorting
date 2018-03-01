@@ -18,12 +18,7 @@
 		<link>
 			<name>src/Demo/Sample.txt</name>
 			<type>1</type>
-			<location>/Users/geethanjalijeevanatham/Desktop/Project1/Project1src/Demo/Sample.txt</location>
-		</link>
-		<link>
-			<name>src/Demo/output.txt</name>
-			<type>1</type>
-			<location>/Users/geethanjalijeevanatham/Desktop/Project1/Project1src/Demo/output.txt</location>
+			<location>C:/Users/vijay/workspace/SortingCC/projectsorting/661project1/src/Demo/Sample.txt</location>
 		</link>
 	</linkedResources>
 </projectDescription>
