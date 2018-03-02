@@ -15,24 +15,36 @@ import StorageManager.Storage;
 import Tuple.Tuple;
 
 public class TestPages{
+	public static final String outputTextPath = "resources/output.txt";
+	public static final int availableBuffers = 3;
+	
+	
 	public static void main(String[] args) throws Exception{		
+		
 		long startTime = System.nanoTime();
 		
 		Storage s1 = new Storage();
-		s1.CreateStorage("myDiskMine", 1024, 1024*2500);
-		ProducerIterator<byte []> textFileProducerIterator= new TextFileScanIterator();
-		ConsumerIterator<byte []> relationConsumerIterator = new PutTupleInRelationIterator(35,"myDiskMine");
-		PTCFramework<byte[],byte[]> fileToRelationFramework= new TextFileToRelationPTC(textFileProducerIterator, relationConsumerIterator);
-		fileToRelationFramework.run();
 		
 		Tuple t = new Tuple();
+		s1.CreateStorage("myDiskMine", 1024, 1024*2500);
+		String storageName = s1.getFileName();
+		
+		
+		ProducerIterator<byte []> textFileProducerIterator= new TextFileScanIterator();
+		ConsumerIterator<byte []> relationConsumerIterator = new PutTupleInRelationIterator(t.getLength(),storageName);
+		PTCFramework<byte[],byte[]> fileToRelationFramework= new TextFileToRelationPTC(textFileProducerIterator, relationConsumerIterator);
+		
+		
+		fileToRelationFramework.run();
+		
+		
 		
 		int numPages = relationConsumerIterator.getNumAllocated();
-		System.out.println("num pages:" + numPages );
-		GetPageFromRelationIterator getpagefromrelationiter = new GetPageFromRelationIterator("myDiskMine",0);
+		//System.out.println("num pages:" + numPages );
+		GetPageFromRelationIterator getpagefromrelationiter = new GetPageFromRelationIterator(storageName,0);
 		getpagefromrelationiter.open();
 		
-		relationConsumerIterator = new PutTupleInRelationIterator(35,"myDiskMine");
+		relationConsumerIterator = new PutTupleInRelationIterator(t.getLength(),storageName);
 		relationConsumerIterator.open();
 		
 		while(getpagefromrelationiter.hasNext()){
@@ -43,18 +55,19 @@ public class TestPages{
 				getcount[i] = page[i];
 			}
 			int count = ByteBuffer.wrap(getcount).getInt();
+			System.out.println("count :" + count);
 			int bytesread = 8;
 			
 			for(int i=0 ; i<count; i++){
 				byte[] val = new byte[35];
 				
-				for(int j=0; j<35; j++){
+				for(int j=0; j<t.getLength(); j++){
 					val[j] = page[bytesread+j];
 				}
 				
 				byte[] key = val;
 				
-				bytesread = bytesread + 35;
+				bytesread = bytesread + t.getLength();
 				Bytenode bytenode = new Bytenode(key,val);
 				byteList.add(bytenode);
 			}
@@ -65,7 +78,7 @@ public class TestPages{
 				public int compare(Bytenode o1, Bytenode o2) {
 					byte[] keyo1 = o1.key;
 					byte[] keyo2 = o2.key;
-					
+					System.out.println(t.compare(keyo1,keyo2));
 					return t.compare(keyo1, keyo2);
 				}
 				
@@ -76,12 +89,12 @@ public class TestPages{
 				relationConsumerIterator.next(fill);
 			} 
 		} 
+		System.out.println("Number of pages before passing to create runs : " + numPages);
+		CreateRuns proc = new CreateRuns(availableBuffers,numPages,numPages);
 		
-		CreateRuns proc = new CreateRuns(3,numPages,numPages);
-		
-		GetTupleFromRelationIterator iter = new GetTupleFromRelationIterator("myDiskMine",35, proc.getLastSortPage(numPages));
+		GetTupleFromRelationIterator iter = new GetTupleFromRelationIterator(storageName,t.getLength(), proc.getLastSortPage(numPages));
 		iter.open();
-		PrintStream out = new PrintStream(new FileOutputStream("C:/Users/vijay/workspace/SortingCC/projectsorting/661project1/src/output.txt"));
+		PrintStream out = new PrintStream(new FileOutputStream(outputTextPath));
 		System.setOut(out);
 		while(iter.hasNext()){
 			byte [] tuple = iter.next();

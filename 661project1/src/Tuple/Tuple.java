@@ -16,6 +16,7 @@ public class Tuple {
 	private int length;
 	private int keyLength;
 	private int[] keyBytes;
+	public static final String tupleConfigPath = "resources/TupleConfiguration.xml";
 	
 	/**
 	 * In this constructor, we define that length is given by len
@@ -32,6 +33,7 @@ public class Tuple {
 	 */
 	
 	public int getLength(){
+		
 		return this.length;
 	}
 	
@@ -50,7 +52,7 @@ public class Tuple {
 		try{
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = factory.newDocumentBuilder();
-			Document document = builder.parse(new File("C:/Users/vijay/workspace/SortingCC/projectsorting/661project1/src/Tuple/TupleConfiguration.xml"));
+			Document document = builder.parse(new File(tupleConfigPath));
 			
 			NodeList list = document.getElementsByTagName("Attribute");
 			

@@ -36,6 +36,7 @@ public class GetPageFromRelationIterator implements ProducerIterator<byte []>{
 				temp[i] = buffer[i+4];
 			}
 			nextpage = ByteBuffer.wrap(temp).getInt();
+			System.out.println("Next Page:" + nextpage);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -49,6 +50,11 @@ public class GetPageFromRelationIterator implements ProducerIterator<byte []>{
 		s.LoadStorage(filename);
 		this.pagesize = s.pageSize;
 	}
+	
+	/*public byte [] open() throws Exception {
+		this.pagesize = s.pageSize;
+		byte[] openBuffer = new byte[this.pagesize];
+	}*/
 
 	@Override
 	public void close() throws Exception {

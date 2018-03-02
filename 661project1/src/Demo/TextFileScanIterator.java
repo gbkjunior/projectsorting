@@ -9,6 +9,7 @@ public class TextFileScanIterator implements ProducerIterator<byte []>{
 	File file;
 	Scanner in;
 	int count=0;
+	public static final String textFilePath = "resources/Emp_sample.txt";
 	@Override
 	public boolean hasNext() {
 		return in.hasNextLine();
@@ -30,7 +31,7 @@ public class TextFileScanIterator implements ProducerIterator<byte []>{
 
 	@Override
 	public void open() throws Exception {
-		file= new File("C:/Users/vijay/workspace/SortingCC/projectsorting/661project1/src/Emp_sample.txt");
+		file= new File(textFilePath);
 		in=new Scanner(file);
 	}
 

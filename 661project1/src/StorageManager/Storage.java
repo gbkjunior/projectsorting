@@ -14,6 +14,11 @@ public class Storage{
 	private int numWritten;
 	private static long lastAllocatedPage;
 	
+	public String getFileName()
+	{
+		System.out.println(this.fileName);
+		return this.fileName;
+	}
 	public void CreateStorage(String fileName,int pageSize, int fileSize) throws Exception{
 		this.fileName=fileName;
 		this.fileSize= fileSize;

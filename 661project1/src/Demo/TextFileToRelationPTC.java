@@ -99,7 +99,7 @@ public class TextFileToRelationPTC extends PTCFramework<byte [], byte []> {
 				}
 
 				//Once the tuple is stored in the byte array, pass it to the consumer iterator.
-				consumerIterator.next(bytes);
+				consumerIterator.next(bytes); // rename function
 			}
 			
 			producerIterator.close();
