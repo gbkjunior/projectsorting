@@ -26,7 +26,7 @@ public class CreateRuns{
 		this.numBuffers = numBuffers;
 		this.numPages = numPages;
 		this.startpage = startpage;
-		s.LoadStorage("myDiskMine");
+		s.loadStorage("myDiskMine");
 		consiter.open();
 		
 		System.out.println("First Step - Create Runs - Available Buffers : "+numBuffers);

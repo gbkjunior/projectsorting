@@ -18,6 +18,10 @@ public class GetPageFromRelationIterator implements ProducerIterator<byte []>{
 	}
 
 	@Override
+	public void openFile()
+	{
+		
+	}
 	public boolean hasNext() {
 		if(nextpage!=-1){
 			currentpage = nextpage;
@@ -47,7 +51,7 @@ public class GetPageFromRelationIterator implements ProducerIterator<byte []>{
 	@Override
 	public void open() throws Exception {
 		s = new Storage();
-		s.LoadStorage(filename);
+		s.loadStorage(filename);
 		this.pagesize = s.pageSize;
 	}
 	

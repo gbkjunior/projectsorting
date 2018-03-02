@@ -26,7 +26,7 @@ public class TestPages{
 		Storage s1 = new Storage();
 		
 		Tuple t = new Tuple();
-		s1.CreateStorage("myDiskMine", 1024, 1024*2500);
+		s1.createStorage("myDiskMine", 1024, 1024*2500);
 		String storageName = s1.getFileName();
 		
 		

@@ -23,16 +23,21 @@ public class TextFileScanIterator implements ProducerIterator<byte []>{
 		
 		
 	}
-
+	
 	@Override
 	public void remove() {
 		
 	}
 
 	@Override
-	public void open() throws Exception {
+	public void openFile() throws Exception {
 		file= new File(textFilePath);
 		in=new Scanner(file);
+	}
+	
+	@Override
+	public void open() throws Exception {
+	
 	}
 
 	@Override

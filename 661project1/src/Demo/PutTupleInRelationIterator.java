@@ -21,7 +21,7 @@ public class PutTupleInRelationIterator implements ConsumerIterator<byte []>{
 	
 	public void open() throws Exception{
 		storage= new Storage();
-		storage.LoadStorage(fileName);
+		storage.loadStorage(fileName);
 		pageSize=storage.pageSize;
 		System.out.println("pazeSize : " + pageSize);
 		currentpage=-1;

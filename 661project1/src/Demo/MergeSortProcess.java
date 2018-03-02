@@ -27,7 +27,7 @@ public class MergeSortProcess{
 		consiter.open();
 		
 		s = new Storage();
-		s.LoadStorage("myDiskMine");
+		s.loadStorage("myDiskMine");
 		//System.out.println(s.getLastAllocated());
 		long lastindex = s.getLastAllocated();
 		System.out.println(lastindex + " - " + startpage);

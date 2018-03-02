@@ -20,7 +20,7 @@ public class MergeSortNew{
 	
 	public MergeSortNew(int startpage, int numPages) throws Exception{
         s = new Storage();
-        s.LoadStorage("myDiskMine");
+        s.loadStorage("myDiskMine");
         consiter.open();
         
         createRuns(1024,startpage,numPages);

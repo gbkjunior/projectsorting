@@ -15,14 +15,14 @@ public class PutTupleIterator implements ConsumerIterator<byte []>{
 	long initialFirstPage = 0;
 	long incrementor = 0;
 	
-	public PutTupleIterator(int tuplelength,String fileName) {
+	public PutTupleIterator(int tuplelength,String fileName) throws Exception {
 		this.tuplelength= tuplelength;
 		this.fileName=fileName;
+		storage = new Storage();
+		storage.loadStorage(this.fileName);
 	}
 	
 	public void open() throws Exception{
-		storage= new Storage();
-		storage.LoadStorage(fileName);
 		pageSize=storage.pageSize;
 		currentpage=-1;
 		byteswrittentopage=8;

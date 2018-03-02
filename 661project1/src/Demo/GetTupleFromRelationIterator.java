@@ -16,6 +16,10 @@ public class GetTupleFromRelationIterator implements ProducerIterator<byte []>{
 	Storage s;
 	byte[] mainbuffer;
 	
+	public void openFile(){
+		
+	}
+	
 	public GetTupleFromRelationIterator(String filename, int tuplelength, int currentpage){
 		this.filename = filename;
 		this.tuplelength = tuplelength;
@@ -24,7 +28,7 @@ public class GetTupleFromRelationIterator implements ProducerIterator<byte []>{
 	
 	public void open() throws Exception{
 		s = new Storage();
-		s.LoadStorage(filename);
+		s.loadStorage(filename);
 		this.pagesize = s.pageSize;
 	}
 	

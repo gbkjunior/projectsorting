@@ -19,7 +19,7 @@ public class Storage{
 		System.out.println(this.fileName);
 		return this.fileName;
 	}
-	public void CreateStorage(String fileName,int pageSize, int fileSize) throws Exception{
+	public void createStorage(String fileName,int pageSize, int fileSize) throws Exception{
 		this.fileName=fileName;
 		this.fileSize= fileSize;
 		this.pageSize=pageSize;
@@ -59,7 +59,7 @@ public class Storage{
 		}
 	}
 	
-	public void LoadStorage(String fileName) throws Exception{
+	public void loadStorage(String fileName) throws Exception{
 		this.file= new RandomAccessFile(fileName, "rw");
 		
 		this.fileSize=file.length();
@@ -81,7 +81,7 @@ public class Storage{
 			this.bitMapSize = (this.bitMapSize/16+1)*16;
 		}
 		this.bitMapSize=this.bitMapSize+16;
-		System.out.println("load storage bitmap size:" + this.bitMapSize);
+		//System.out.println("load storage bitmap size:" + this.bitMapSize);
 		
 		this.numAllocated=0;
 		this.numDeallocated=0;

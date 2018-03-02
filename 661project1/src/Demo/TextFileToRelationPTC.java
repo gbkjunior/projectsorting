@@ -15,7 +15,7 @@ public class TextFileToRelationPTC extends PTCFramework<byte [], byte []> {
 	@Override
 	public void run(){
 		try {
-			this.producerIterator.open(); //change function name for opening the data file.
+			this.producerIterator.openFile(); //change function name for opening the data file.
 			this.consumerIterator.open(); 
 			
 			while(producerIterator.hasNext()){

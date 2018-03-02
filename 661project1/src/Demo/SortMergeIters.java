@@ -30,7 +30,7 @@ public class SortMergeIters{
 		//createIters(1024*3,)
 		System.out.println("Merge Phase");
 		s = new Storage();
-        s.LoadStorage("myDiskMine");
+        s.loadStorage("myDiskMine");
         
         this.numBuffer = numBuffer;
         
