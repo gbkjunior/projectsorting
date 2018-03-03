@@ -14,16 +14,21 @@ public class PutTupleInRelationIterator implements ConsumerIterator<byte []>{
 	int pageSize;
 	long initialFirstPage = 0;
 	
-	public PutTupleInRelationIterator(int tuplelength,String fileName) {
+	public PutTupleInRelationIterator(int tuplelength,String fileName) throws Exception {
 		this.tuplelength= tuplelength;
 		this.fileName=fileName;
+		storage = new Storage(this.fileName);
 	}
-	
+	public void initializePage() throws Exception {
+		pageSize = Storage.pageSize;
+		currentpage = -1;
+		byteswrittentopage = 8;
+	}
 	public void open() throws Exception{
-		storage= new Storage();
-		storage.loadStorage(fileName);
-		pageSize=storage.pageSize;
-		System.out.println("pazeSize : " + pageSize);
+		//storage= new Storage();
+		//storage.loadStorage(fileName);
+		pageSize=Storage.pageSize;
+
 		currentpage=-1;
 		byteswrittentopage=8;
 		

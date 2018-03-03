@@ -2,10 +2,10 @@ package StorageManager;
 import java.io.RandomAccessFile;
 
 public class Storage{
-	private String fileName;
-	private long fileSize;
+	private static String fileName;
+	private static long fileSize;
 	public RandomAccessFile file;
-	public int pageSize;
+	public static int pageSize;
 	private int bitMapSize;
 	public int numPages;
 	private int numAllocated;
@@ -16,14 +16,29 @@ public class Storage{
 	
 	public String getFileName()
 	{
-		System.out.println(this.fileName);
-		return this.fileName;
+		System.out.println(Storage.fileName);
+		return Storage.fileName;
+	}
+	
+	public int getPageSize()
+	{
+		return Storage.pageSize;
+	}
+	
+	public Storage()
+	{
+		
+	}
+	public Storage(String fileName) throws Exception
+	{
+		Storage.fileName = fileName;
+		loadStorage(fileName);
 	}
 	public void createStorage(String fileName,int pageSize, int fileSize) throws Exception{
-		this.fileName=fileName;
-		this.fileSize= fileSize;
-		this.pageSize=pageSize;
-		this.numPages=(int) (this.fileSize/this.pageSize);
+		Storage.fileName=fileName;
+		Storage.fileSize= fileSize;
+		Storage.pageSize=pageSize;
+		this.numPages=(int) (Storage.fileSize/Storage.pageSize);
 		
 		this.bitMapSize =(int) Math.ceil(this.numPages/8.0);
 
@@ -34,7 +49,7 @@ public class Storage{
 		this.bitMapSize=this.bitMapSize+16;
 		
 		System.out.println("bitmap size: "+ this.bitMapSize);
-		this.file= new RandomAccessFile(this.fileName, "rw");
+		this.file= new RandomAccessFile(Storage.fileName, "rw");
 		file.seek(0);
 		//Write the pagesize to the first 4 bytes in the file.
 		file.writeInt(pageSize);
@@ -45,7 +60,7 @@ public class Storage{
 		System.out.println("num pages:" + this.numPages);
 		file.seek(0);
 		
-		this.fileSize=this.fileSize+this.bitMapSize;
+		Storage.fileSize=Storage.fileSize+this.bitMapSize;
 		file.setLength(fileSize);
 		file.seek(16);
 		//Writing 0s to the randomaccessfile so that we physically claim the memory required for the storage.
@@ -54,7 +69,7 @@ public class Storage{
 			this.file.write((byte) 0);
 		}
 		//Writing the file contents will 0s
-		for(int i=this.bitMapSize;i<this.fileSize;i++){
+		for(int i=this.bitMapSize;i<Storage.fileSize;i++){
 			file.write((byte) 0);
 		}
 	}
@@ -62,18 +77,18 @@ public class Storage{
 	public void loadStorage(String fileName) throws Exception{
 		this.file= new RandomAccessFile(fileName, "rw");
 		
-		this.fileSize=file.length();
-		System.out.println("fileSize:" + this.fileSize );
+		Storage.fileSize=file.length();
+		System.out.println("fileSize:" + Storage.fileSize );
 		//Read bytes 4 to 7 which we used to store the number of pages
 		file.seek(4);
 		this.numPages= file.readInt();
 		System.out.println("numpages:" + this.numPages);
-		this.fileName=fileName;
+		Storage.fileName=fileName;
 		
 		//Read the first 4 bytes of the file which we used to store the page size while creating the storage.
 		file.seek(0);
-		this.pageSize = file.readInt();
-		
+		Storage.pageSize = file.readInt();
+		System.out.println("this.pagesize" + Storage.pageSize);
 		
 		this.bitMapSize =(int) Math.ceil(this.numPages/8.0);
 
@@ -96,7 +111,7 @@ public class Storage{
 	
 	public void ReadPage(long n, byte [] buffer) throws Exception{
 		//Go to the offset.
-		long offset= n*this.pageSize+this.bitMapSize;
+		long offset= n*Storage.pageSize+this.bitMapSize;
 		file.seek(offset);
 		
 		//read the page in buffer.
@@ -107,7 +122,7 @@ public class Storage{
 	
 	public void WritePage(long n, byte[] buffer) throws Exception{
 		//Go to the required offset
-		long offset= n*this.pageSize+this.bitMapSize;
+		long offset= n*Storage.pageSize+this.bitMapSize;
 		file.seek(offset);
 		
 		//Write the buffer to the file.

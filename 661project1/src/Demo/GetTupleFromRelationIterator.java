@@ -20,16 +20,17 @@ public class GetTupleFromRelationIterator implements ProducerIterator<byte []>{
 		
 	}
 	
-	public GetTupleFromRelationIterator(String filename, int tuplelength, int currentpage){
+	public GetTupleFromRelationIterator(String filename, int tuplelength, int currentpage) throws Exception{
 		this.filename = filename;
 		this.tuplelength = tuplelength;
 		this.nextPage = currentpage;
+		s = new Storage(this.filename);
 	}
 	
 	public void open() throws Exception{
-		s = new Storage();
-		s.loadStorage(filename);
-		this.pagesize = s.pageSize;
+/*		s = new Storage();
+		s.loadStorage(filename);*/
+		this.pagesize = Storage.pageSize;
 	}
 	
 	public void checkNextPage() throws Exception{

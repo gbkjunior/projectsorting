@@ -16,7 +16,7 @@ public class TextFileToRelationPTC extends PTCFramework<byte [], byte []> {
 	public void run(){
 		try {
 			this.producerIterator.openFile(); //change function name for opening the data file.
-			this.consumerIterator.open(); 
+			this.consumerIterator.initializePage(); // initializing the page for writing the data into it
 			
 			while(producerIterator.hasNext()){
 				
@@ -92,11 +92,11 @@ public class TextFileToRelationPTC extends PTCFramework<byte [], byte []> {
 				for(int i=0;i<23;i++){
 					bytes[4+i]=name[i];
 				}
-				System.out.println("bytes length:" + bytes.length);
+				/*System.out.println("bytes length:" + bytes.length);
 				for(int i=0; i<bytes.length;i++)
 				{
 					System.out.println("bytes:" + bytes[i]);
-				}
+				}*/
 
 				//Once the tuple is stored in the byte array, pass it to the consumer iterator.
 				consumerIterator.next(bytes); // rename function

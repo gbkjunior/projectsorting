@@ -18,8 +18,6 @@ public class PutTupleIterator implements ConsumerIterator<byte []>{
 	public PutTupleIterator(int tuplelength,String fileName) throws Exception {
 		this.tuplelength= tuplelength;
 		this.fileName=fileName;
-		storage = new Storage();
-		storage.loadStorage(this.fileName);
 	}
 	
 	public void open() throws Exception{
@@ -143,6 +141,12 @@ public class PutTupleIterator implements ConsumerIterator<byte []>{
 
 	@Override
 	public void remove() {
+		
+	}
+
+	@Override
+	public void initializePage() throws Exception {
+		// TODO Auto-generated method stub
 		
 	}
 }

@@ -9,12 +9,11 @@ public class GetPageFromRelationIterator implements ProducerIterator<byte []>{
 	String filename;
 	int currentpage;
 	int nextpage;
-	Storage s;
-	private int pagesize;
-	
-	public GetPageFromRelationIterator(String filename, int currentpage){
+	Storage storage;
+	public GetPageFromRelationIterator(String filename, int currentpage) throws Exception{
 		this.filename = filename;
 		this.nextpage = currentpage;
+		storage = new Storage(this.filename);
 	}
 
 	@Override
@@ -32,9 +31,9 @@ public class GetPageFromRelationIterator implements ProducerIterator<byte []>{
 
 	@Override
 	public byte[] next() {
-		byte[] buffer = new byte[pagesize];
+		byte[] buffer = new byte[Storage.pageSize];
 		try {
-			s.ReadPage(currentpage, buffer);
+			storage.ReadPage(currentpage, buffer);
 			byte[] temp = new byte[4];
 			for(int i=0; i<4; i++){
 				temp[i] = buffer[i+4];
@@ -50,9 +49,9 @@ public class GetPageFromRelationIterator implements ProducerIterator<byte []>{
 
 	@Override
 	public void open() throws Exception {
-		s = new Storage();
-		s.loadStorage(filename);
-		this.pagesize = s.pageSize;
+		
+		System.out.println("storage page size returned: " + storage.getPageSize());
+		storage.getPageSize();
 	}
 	
 	/*public byte [] open() throws Exception {
