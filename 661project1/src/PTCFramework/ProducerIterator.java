@@ -7,4 +7,5 @@ public interface ProducerIterator<P> extends Iterator<P>{
 	void open() throws Exception;
 	void close() throws Exception;
 	void openFile() throws Exception;
+	byte [] getNextRecord() throws Exception;
 }

@@ -149,4 +149,10 @@ public class PutTupleIterator implements ConsumerIterator<byte []>{
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void putTupleInStorage(byte[] c) throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
 }

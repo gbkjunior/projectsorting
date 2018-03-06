@@ -20,7 +20,7 @@ public class TextFileToRelationPTC extends PTCFramework<byte [], byte []> {
 			
 			while(producerIterator.hasNext()){
 				
-				byte [] producerElement = producerIterator.next();
+				byte [] producerElement = producerIterator.getNextRecord();
 				//Here we have a single tuple as it is in Emp.txt file
 				
 				int len = producerElement.length;
@@ -99,7 +99,7 @@ public class TextFileToRelationPTC extends PTCFramework<byte [], byte []> {
 				}*/
 
 				//Once the tuple is stored in the byte array, pass it to the consumer iterator.
-				consumerIterator.next(bytes); // rename function
+				consumerIterator.putTupleInStorage(bytes); // rename function
 			}
 			
 			producerIterator.close();

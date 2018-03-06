@@ -44,5 +44,12 @@ public class TextFileScanIterator implements ProducerIterator<byte []>{
 	public void close() throws Exception {
 		in.close();
 	}
+
+	public byte [] getNextRecord() {
+		// TODO Auto-generated method stub
+		count++;
+		//System.out.println("next returns :"+in.nextLine());
+		return in.nextLine().getBytes();
+	}
 	
 }

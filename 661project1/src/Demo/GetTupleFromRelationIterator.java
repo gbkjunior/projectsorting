@@ -92,5 +92,11 @@ public class GetTupleFromRelationIterator implements ProducerIterator<byte []>{
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public byte[] getNextRecord() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 }

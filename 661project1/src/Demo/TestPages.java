@@ -47,6 +47,18 @@ public class TestPages{
 		GetPageFromRelationIterator getpagefromrelationiter = new GetPageFromRelationIterator(storageName,0);
 		getpagefromrelationiter.open();
 		
+		// implementing the actual open iterator
+		
+		/*getpagefromrelationiter.open1(); use this in the actual implementation
+		
+		while(getpagefromrelationiter.hasNext1())
+		{
+			byte [] tupleData = getpagefromrelationiter.next1();
+			String sam = new String(tupleData);
+			System.out.println(sam);
+			
+		}*/
+		
 		relationConsumerIterator = new PutTupleInRelationIterator(t.getLength(),storageName);
 		relationConsumerIterator.open();
 		
@@ -62,7 +74,7 @@ public class TestPages{
 			int bytesread = 8;
 			
 			for(int i=0 ; i<count; i++){
-				byte[] val = new byte[35];
+				byte[] val = new byte[t.getLength()];
 				
 				for(int j=0; j<t.getLength(); j++){
 					val[j] = page[bytesread+j];
@@ -96,7 +108,7 @@ public class TestPages{
 			}
 			for(Bytenode e : byteList){
 				byte[] fill = e.val;
-				relationConsumerIterator.next(fill);
+				relationConsumerIterator.putTupleInStorage(fill);
 			} 
 		} 
 		System.out.println("Number of pages before passing to create runs : " + numPages);

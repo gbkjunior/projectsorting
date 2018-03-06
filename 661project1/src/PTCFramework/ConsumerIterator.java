@@ -11,4 +11,5 @@ public interface ConsumerIterator<C> extends Iterator<C>{
 	//Adding a function which takes a parameter and consumes it.
 	public void next(C c) throws Exception;
 	public int getNumAllocated();
+	public void putTupleInStorage(C c) throws Exception;
 }
