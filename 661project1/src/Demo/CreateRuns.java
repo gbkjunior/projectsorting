@@ -19,14 +19,15 @@ public class CreateRuns{
 	int lastindex;
 	
 	Tuple t = new Tuple();
-	Storage s = new Storage();
-	ConsumerIterator<byte []> consiter = new PutTupleInRelationIterator(35,"myDiskMine");
+	//Storage s = new Storage();
+	
+	ConsumerIterator<byte []> consiter = new PutTupleInRelationIterator(t.getLength(),TestPages.s1.getFileName());
 	
 	public CreateRuns(int numBuffers, int startpage, int numPages) throws Exception{
 		this.numBuffers = numBuffers;
 		this.numPages = numPages;
 		this.startpage = startpage;
-		s.loadStorage("myDiskMine");
+		//s.loadStorage(s.getFileName());
 		consiter.open();
 		
 		System.out.println("First Step - Create Runs - Available Buffers : "+numBuffers);
@@ -43,12 +44,12 @@ public class CreateRuns{
 		
 		for(int j=0; j<numPages;){
 		    for(int i=0; i<numBuffers; i++){
-			    byteMatrix[i] = new byte[1024];
+			    byteMatrix[i] = new byte[Storage.pageSize];
 		    }
 		
 		for(int i=0; i<numBuffers; i++){
 			if(j<numPages){
-				s.ReadPage(startpage+j, byteMatrix[i]);
+				TestPages.s1.ReadPage(startpage+j, byteMatrix[i]);
 				j=j+1;
 			}
 			else{
@@ -170,7 +171,7 @@ public class CreateRuns{
 	
 	public int getLastSortPage(int numPages){
 		int page = 0;
-		page = (int) s.getLastAllocated();
+		page = (int) TestPages.s1.getLastAllocated();
 		page = page + 1;
 		page = page - numPages;
 		return page;

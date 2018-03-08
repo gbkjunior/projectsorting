@@ -17,16 +17,16 @@ import Tuple.Tuple;
 public class TestPages{
 	public static final String outputTextPath = "resources/output.txt";
 	public static final int availableBuffers = 3;
-	
+	public static Storage s1 ;
 	
 	public static void main(String[] args) throws Exception{		
 		
 		long startTime = System.nanoTime();
 		
-		Storage s1 = new Storage(); // initializing storage variable to access its methods
+		 // initializing storage variable to access its methods
 		
 		Tuple t = new Tuple(); // initializing tuple variable to access its methods
-		
+		s1 = new Storage();
 		s1.createStorage("myDiskMine", 1024, 1024*2500);  // creating a storage by giving a name, defining page size and file size as its parameters. 
 		
 		String storageName = s1.getFileName(); // returns the name of storage that has been created.
@@ -41,23 +41,61 @@ public class TestPages{
 		fileToRelationFramework.run();
 		
 		
+		/* after the run function is executed, we have loaded the data into the storage. Now we have to create the runs using three buffers
+		 * and write the sorted data back onto the disc.
+		 * 
+		 *  */
+		
+		
 		
 		int numPages = relationConsumerIterator.getNumAllocated();
 		//System.out.println("num pages:" + numPages );
-		GetPageFromRelationIterator getpagefromrelationiter = new GetPageFromRelationIterator(storageName,0);
+		GetPageFromRelationIterator getpagefromrelationiter = new GetPageFromRelationIterator(storageName,s1.getStartPage());
 		getpagefromrelationiter.open();
 		
 		// implementing the actual open iterator
 		
-		/*getpagefromrelationiter.open1(); use this in the actual implementation
+		/*getpagefromrelationiter.open1(); //use this in the actual implementation
 		
 		while(getpagefromrelationiter.hasNext1())
 		{
-			byte [] tupleData = getpagefromrelationiter.next1();
-			String sam = new String(tupleData);
-			System.out.println(sam);
+			List<Bytenode> byteList = new ArrayList<Bytenode>();
+				byte [] tupleData = getpagefromrelationiter.next1();
+				byte [] key = tupleData;
+				
+				Bytenode byteNode = new Bytenode(key,tupleData);
+				//String sam = new String(tupleData);
+				//System.out.println(sam);
+				byteList.add(byteNode);
 			
-		}*/
+			
+						
+			byteList.sort(new Comparator<Bytenode>(){
+
+				@Override
+				public int compare(Bytenode o1, Bytenode o2) {
+					byte[] keyo1 = o1.key;
+					byte[] keyo2 = o2.key;
+					//System.out.println(t.compare(keyo1,keyo2));
+					return t.compare(keyo1, keyo2);
+				}
+				
+			});
+			
+			for(Bytenode e : byteList)
+			{
+				byte[] sample = e.val;
+				String getText = new String(sample);
+				//Integer getInt = new Integer(sample);
+				System.out.println(getText);
+			}
+			for(Bytenode e : byteList){
+				byte[] fill = e.val;
+				relationConsumerIterator.putTupleInStorage(fill);
+			} 
+		} 
+*/	
+		
 		
 		relationConsumerIterator = new PutTupleInRelationIterator(t.getLength(),storageName);
 		relationConsumerIterator.open();
@@ -113,7 +151,7 @@ public class TestPages{
 		} 
 		System.out.println("Number of pages before passing to create runs : " + numPages);
 		CreateRuns proc = new CreateRuns(availableBuffers,numPages,numPages);
-		
+		System.out.println("get last sort page :" + proc.getLastSortPage(numPages));
 		GetTupleFromRelationIterator iter = new GetTupleFromRelationIterator(storageName,t.getLength(), proc.getLastSortPage(numPages));
 		iter.open();
 		PrintStream out = new PrintStream(new FileOutputStream(outputTextPath));

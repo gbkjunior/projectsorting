@@ -13,6 +13,7 @@ public class PutTupleInRelationIterator implements ConsumerIterator<byte []>{
 	String fileName;
 	int pageSize;
 	long initialFirstPage = 0;
+	byte [][] bufferMatrix;
 	
 	public PutTupleInRelationIterator(int tuplelength,String fileName) throws Exception {
 		this.tuplelength= tuplelength;
@@ -32,6 +33,16 @@ public class PutTupleInRelationIterator implements ConsumerIterator<byte []>{
 		currentpage=-1;
 		byteswrittentopage=8;
 		
+		
+	}
+	
+	/* 
+	 * Writing open function for initializing 3 buffers for creating runs.
+	 * */
+	
+	public void open1()
+	{
+		bufferMatrix = new byte[TestPages.availableBuffers][Storage.pageSize];
 		
 	}
 	

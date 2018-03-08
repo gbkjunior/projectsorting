@@ -14,6 +14,7 @@ public class GetPageFromRelationIterator implements ProducerIterator<byte []>{
 	Tuple tuple;
 	private int pagesize;
 	public byte [] openBuffer;
+	byte[][] bufferMatrix;
 	public int tupleCount = 0;
 	public int bytesRead;
 	public GetPageFromRelationIterator(String filename, int currentpage) throws Exception{
@@ -102,6 +103,7 @@ public class GetPageFromRelationIterator implements ProducerIterator<byte []>{
 				tupleCountBuffer[i] = openBuffer[i];
 			}
 			this.tupleCount = ByteBuffer.wrap(tupleCountBuffer).getInt();
+			System.out.println(tupleCount);
 			this.bytesRead = 8;
 			byte [] nextPageBuffer = new byte[4];
 			for(int i=0; i<4;i++)
@@ -118,6 +120,37 @@ public class GetPageFromRelationIterator implements ProducerIterator<byte []>{
 		
 		
 	}
+	
+	/* open for creating runs using 3 buffers */
+	
+	public void open2() {
+		this.pagesize = Storage.pageSize;
+		this.openBuffer = new byte[this.pagesize];
+		try{
+			storage.ReadPage(currentpage, this.openBuffer);
+			byte[] tupleCountBuffer = new byte[4];
+			for(int i=0; i<4; i++){
+				tupleCountBuffer[i] = openBuffer[i];
+			}
+			this.tupleCount = ByteBuffer.wrap(tupleCountBuffer).getInt();
+			System.out.println(tupleCount);
+			this.bytesRead = 8;
+			byte [] nextPageBuffer = new byte[4];
+			for(int i=0; i<4;i++)
+			{
+				nextPageBuffer[i] = openBuffer[i+4];
+			}
+			nextpage = ByteBuffer.wrap(nextPageBuffer).getInt();
+			System.out.println(nextpage);
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		
+		
+	}
+	
 	public byte[] next1() throws Exception
 	{
 		byte[] val = new byte[tuple.getLength()];

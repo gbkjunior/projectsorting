@@ -12,6 +12,7 @@ public class Storage{
 	private int numDeallocated;
 	private int numRead;
 	private int numWritten;
+	private int startPage;
 	private static long lastAllocatedPage;
 	
 	public String getFileName()
@@ -102,6 +103,7 @@ public class Storage{
 		this.numDeallocated=0;
 		this.numRead=0;
 		this.numWritten=0;
+		this.startPage = 0;
 	}
 	
 	public void UnloadStorage() {
@@ -146,6 +148,10 @@ public class Storage{
 		return numAllocated;
 	}
 	
+	public int getStartPage()
+	{
+		return startPage;
+	}
 	
 	public long AllocatePage() throws Exception{
 		file.seek(16);
