@@ -16,10 +16,18 @@ public class GetPageFromRelationIterator implements ProducerIterator<byte []>{
 	public byte [] openBuffer;
 	byte[][] bufferMatrix;
 	public int tupleCount = 0;
+	public byte [][] tupleCountBuffer;
+	public byte [][] nextPageBuffer;
+	public int nextBufferNum=0;
 	public int bytesRead;
+	int numPages;
+	int numBuffers = TestPages.availableBuffers;
+	
+	
 	public GetPageFromRelationIterator(String filename, int currentpage) throws Exception{
 		this.filename = filename;
 		this.nextpage = currentpage;
+		this.numPages = TestPages.numPages;
 		storage = new Storage(this.filename);
 		tuple = new Tuple();
 	}
@@ -35,7 +43,7 @@ public class GetPageFromRelationIterator implements ProducerIterator<byte []>{
 		if(nextpage != -1)
 		{
 			currentpage = nextpage;
-			open1();
+			open2();
 			
 		}
 	}
@@ -125,9 +133,44 @@ public class GetPageFromRelationIterator implements ProducerIterator<byte []>{
 	
 	public void open2() {
 		this.pagesize = Storage.pageSize;
-		this.openBuffer = new byte[this.pagesize];
+		bufferMatrix = new byte [numBuffers][];
+		
+		nextPageBuffer = new byte [numBuffers][];
+		tupleCountBuffer = new byte[numBuffers][];
+		    
+		//this.openBuffer = new byte[this.pagesize];
 		try{
-			storage.ReadPage(currentpage, this.openBuffer);
+			
+			    for(int i=0; i<numBuffers; i++){
+			    	if(nextpage != -1)
+			    	{
+			    		
+			    	
+				    bufferMatrix[i] = new byte[Storage.pageSize]; 
+				    storage.ReadPage(currentpage+i, bufferMatrix[i]);
+				    byte[] tupleCountBuffer1 = new byte[4];
+					for(int k=0; k<4; k++){
+						tupleCountBuffer1[k] = bufferMatrix[i][k];
+					}
+					this.tupleCount = ByteBuffer.wrap(tupleCountBuffer1).getInt();
+					tupleCountBuffer[i] = new byte[1]; 
+					tupleCountBuffer[i][0] = (byte) tupleCount;
+					System.out.println(tupleCountBuffer[i][0]);
+					this.bytesRead = 8;
+					byte [] nextPageBuffer1 = new byte[4];
+					for(int k=0; k<4;k++)
+					{
+						nextPageBuffer1[k] = bufferMatrix[i][k+4];
+					}
+					this.nextpage = ByteBuffer.wrap(nextPageBuffer1).getInt();
+					nextPageBuffer[i] = new byte[1];
+					nextPageBuffer[i][0] = (byte) nextpage;
+					System.out.println(nextPageBuffer[i][0]);
+					
+			    	}
+			    }
+			/*
+			//storage.ReadPage(currentpage, this.openBuffer);
 			byte[] tupleCountBuffer = new byte[4];
 			for(int i=0; i<4; i++){
 				tupleCountBuffer[i] = openBuffer[i];
@@ -141,8 +184,10 @@ public class GetPageFromRelationIterator implements ProducerIterator<byte []>{
 				nextPageBuffer[i] = openBuffer[i+4];
 			}
 			nextpage = ByteBuffer.wrap(nextPageBuffer).getInt();
-			System.out.println(nextpage);
-		}
+			System.out.println(nextpage);*/
+			    
+			
+			}
 		catch(Exception e)
 		{
 			e.printStackTrace();
@@ -154,14 +199,18 @@ public class GetPageFromRelationIterator implements ProducerIterator<byte []>{
 	public byte[] next1() throws Exception
 	{
 		byte[] val = new byte[tuple.getLength()];
-		
-		
+		System.out.println("num pages in next: " + numPages);
+		int i=0;
 		for(int j=0;j<tuple.getLength();j++)
 		{
-			val[j]= this.openBuffer[this.bytesRead+j];
+			if(nextBufferNum < numPages)
+			{
+			val[j]= this.bufferMatrix[nextBufferNum][this.bytesRead+j];
+			}
 		}
 		this.bytesRead = this.bytesRead + tuple.getLength();
 		tupleCount--;
+		nextBufferNum++;
 		/*byte [] getNextPage = new byte[4];
 		for(int i=0;i<4;i++)
 		{

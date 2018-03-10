@@ -18,7 +18,7 @@ public class TestPages{
 	public static final String outputTextPath = "resources/output.txt";
 	public static final int availableBuffers = 3;
 	public static Storage s1 ;
-	
+	public static int numPages;
 	public static void main(String[] args) throws Exception{		
 		
 		long startTime = System.nanoTime();
@@ -48,7 +48,7 @@ public class TestPages{
 		
 		
 		
-		int numPages = relationConsumerIterator.getNumAllocated();
+		 numPages = relationConsumerIterator.getNumAllocated();
 		//System.out.println("num pages:" + numPages );
 		GetPageFromRelationIterator getpagefromrelationiter = new GetPageFromRelationIterator(storageName,s1.getStartPage());
 		getpagefromrelationiter.open();
@@ -100,7 +100,9 @@ public class TestPages{
 		relationConsumerIterator = new PutTupleInRelationIterator(t.getLength(),storageName);
 		relationConsumerIterator.open();
 		
-		while(getpagefromrelationiter.hasNext()){
+		// the while loop below will sort records in a given buffer
+		
+	/*	while(getpagefromrelationiter.hasNext()){
 			List<Bytenode> byteList = new ArrayList<Bytenode>();
 			byte[] page = getpagefromrelationiter.next();
 			byte[] getcount = new byte[4];
@@ -148,9 +150,13 @@ public class TestPages{
 				byte[] fill = e.val;
 				relationConsumerIterator.putTupleInStorage(fill);
 			} 
-		} 
+		}
+*/		
+		
 		System.out.println("Number of pages before passing to create runs : " + numPages);
-		CreateRuns proc = new CreateRuns(availableBuffers,numPages,numPages);
+		// testing create runs before sorting it initially
+		
+		CreateRuns proc = new CreateRuns(availableBuffers,s1.getStartPage(),numPages);
 		System.out.println("get last sort page :" + proc.getLastSortPage(numPages));
 		GetTupleFromRelationIterator iter = new GetTupleFromRelationIterator(storageName,t.getLength(), proc.getLastSortPage(numPages));
 		iter.open();

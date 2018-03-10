@@ -8,24 +8,25 @@ import java.util.Comparator;
 import java.util.List;
 
 import PTCFramework.ConsumerIterator;
+import PTCFramework.ProducerIterator;
 import StorageManager.Storage;
 import Tuple.Tuple;
 
 public class CreateRuns{
 	int numBuffers;
 	int startpage;
-	int numPages;
-	byte[][] byteMatrix;
+	static int numPages;
+	byte [][] byteMatrix;
 	int lastindex;
 	
 	Tuple t = new Tuple();
 	//Storage s = new Storage();
 	
 	ConsumerIterator<byte []> consiter = new PutTupleInRelationIterator(t.getLength(),TestPages.s1.getFileName());
-	
+	GetPageFromRelationIterator proiter = new GetPageFromRelationIterator(TestPages.s1.getFileName(),TestPages.s1.getStartPage());
 	public CreateRuns(int numBuffers, int startpage, int numPages) throws Exception{
 		this.numBuffers = numBuffers;
-		this.numPages = numPages;
+		CreateRuns.numPages = numPages;
 		this.startpage = startpage;
 		//s.loadStorage(s.getFileName());
 		consiter.open();
@@ -34,22 +35,91 @@ public class CreateRuns{
 		System.out.println("Processing Pass - 1 "+"no: of Pages read - "+numPages+" no of Pages written - "+numPages);
 		System.out.println();
 		
+		proiter.open2();
 		run();
 		SortMergeIters iter = new SortMergeIters(getLastSortPage(numPages),numPages,numBuffers);
 		
+	}
+	
+	public byte [] sortTuplesInBuffer(byte [] bufferMatrix) throws Exception
+	{
+		List<Bytenode> byteList = new ArrayList<Bytenode>();
+		
+			byte [] getcount = new byte[4];
+			for(int i=0; i<4; i++){
+				getcount[i] = bufferMatrix[i];
+			}
+			int count = ByteBuffer.wrap(getcount).getInt();
+			System.out.println("count :" + count);
+			int bytesread = 8;
+			
+			for(int i=0 ; i<count; i++){
+				byte[] val = new byte[t.getLength()];
+				
+				val = proiter.next1();
+				
+				byte[] key = val;
+				
+				bytesread = bytesread + t.getLength();
+				Bytenode bytenode = new Bytenode(key,val);
+				byteList.add(bytenode);
+			}
+			byteList.sort(new Comparator<Bytenode>(){
+
+				@Override
+				public int compare(Bytenode o1, Bytenode o2) {
+					byte[] keyo1 = o1.key;
+					byte[] keyo2 = o2.key;
+					//System.out.println(t.compare(keyo1,keyo2));
+					return t.compare(keyo1, keyo2);
+				}
+				
+			});
+			
+			/*byte[] b = new byte [byteList.size()];
+			b = byteList.get(0).key;
+			String s = new String(b);
+			System.out.println(s);
+			System.out.println(byteList.size());
+			*/
+			
+			byte [] putSortedBuffer = new byte[Storage.pageSize];
+			bytesread = 8;
+			for(int i=0;i<8;i++)
+			{
+				putSortedBuffer[i] = bufferMatrix[i];
+			}
+			for(int j=0;j<byteList.size();j++)
+			{
+				for(int i=0;i<byteList.size();i++)
+				{
+					//Bytenode sortedList = (Bytenode) byteList.get(i);
+					putSortedBuffer[bytesread+i] = byteList.get(j).val[i];
+				}
+				bytesread = bytesread + t.getLength();
+			}
+			
+			return putSortedBuffer;
+			//Bytenode putSortedBuffer = byteList.get(0);
+			
 	}
 	
 	public void run() throws Exception{
 		byteMatrix = new byte[numBuffers][];
 		
 		for(int j=0; j<numPages;){
-		    for(int i=0; i<numBuffers; i++){
+		    /*for(int i=0; i<numBuffers; i++){
 			    byteMatrix[i] = new byte[Storage.pageSize];
 		    }
-		
+		*/
 		for(int i=0; i<numBuffers; i++){
 			if(j<numPages){
-				TestPages.s1.ReadPage(startpage+j, byteMatrix[i]);
+				//while(proiter.hasNext1())
+				
+				proiter.bufferMatrix[i] = sortTuplesInBuffer(proiter.bufferMatrix[i]);
+				
+				/*TestPages.s1.ReadPage(startpage+j, byteMatrix[i]);
+				byteMatrix[i] = sortTuplesInBuffer(byteMatrix[i]);*/
 				j=j+1;
 			}
 			else{
@@ -59,6 +129,7 @@ public class CreateRuns{
 			
 			lastindex = i;
 		}
+		
 		
 		merge(lastindex);
 		
@@ -117,7 +188,7 @@ public class CreateRuns{
 		
 		for(int j=0; j<=lastindex; j++){
 			for(int i=0; i<4; i++){
-				count[i] = byteMatrix[j][i];
+				count[i] = proiter.bufferMatrix[j][i];
 			}
 			
 			countval = ByteBuffer.wrap(count).getInt();
@@ -132,7 +203,7 @@ public class CreateRuns{
 				if(currentindex[j] < finalindex[j]){
 					byte[] tuple = new byte[35];
 					for(int l=0; l<35; l++){
-						tuple[l] = byteMatrix[j][currentindex[j]+l];
+						tuple[l] = proiter.bufferMatrix[j][currentindex[j]+l];
 					}
 					
 					TupleNode tuplenode = new TupleNode(tuple, j);
@@ -151,6 +222,19 @@ public class CreateRuns{
 			});
 			
 			TupleNode tem = (TupleNode) tupleList.get(0);
+			
+			
+			/*for(int j=0;j<=lastindex;j++)
+			{
+				if(currentindex[j]<currentindex[j]+35 && currentindex[j]<finalindex[j])
+				{
+					for(int l=0;l<35;l++)
+					{
+						proiter.bufferMatrix[j][currentindex[j]+l] = tem.tuple[l];
+						currentindex[j] = currentindex[j]+l;
+					}
+				}
+			}*/
 			consiter.next(tem.tuple);
 			currentindex[tem.buffernum] = currentindex[tem.buffernum]+35;
 			

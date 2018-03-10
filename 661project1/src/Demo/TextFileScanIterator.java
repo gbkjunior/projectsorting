@@ -9,7 +9,7 @@ public class TextFileScanIterator implements ProducerIterator<byte []>{
 	File file;
 	Scanner in;
 	int count=0;
-	public static final String textFilePath = "resources/data.txt";
+	public static final String textFilePath = "resources/Emp_sample.txt";
 	@Override
 	public boolean hasNext() {
 		return in.hasNextLine();
