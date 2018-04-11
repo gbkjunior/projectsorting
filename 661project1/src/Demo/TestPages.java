@@ -16,7 +16,7 @@ import Tuple.Tuple;
 
 public class TestPages{
 	public static final String outputTextPath = "resources/output.txt";
-	public static final int availableBuffers = 3;
+	public static final int availableBuffers = 1;
 	public static Storage s1 ;
 	public static int numPages;
 	public static void main(String[] args) throws Exception{		
@@ -53,13 +53,18 @@ public class TestPages{
 		GetPageFromRelationIterator getpagefromrelationiter = new GetPageFromRelationIterator(storageName,s1.getStartPage());
 		getpagefromrelationiter.open();
 		
-		// implementing the actual open iterator
 		
-		/*getpagefromrelationiter.open1(); //use this in the actual implementation
+		relationConsumerIterator = new PutTupleInRelationIterator(t.getLength(),storageName);
+		relationConsumerIterator.open();
+		
+		// implementing the actual open iterator
+		getpagefromrelationiter.open1(); //use this in the actual implementation
 		
 		while(getpagefromrelationiter.hasNext1())
 		{
 			List<Bytenode> byteList = new ArrayList<Bytenode>();
+			for(int i=0;i<getpagefromrelationiter.noOfTuples;i++)
+			{
 				byte [] tupleData = getpagefromrelationiter.next1();
 				byte [] key = tupleData;
 				
@@ -68,6 +73,8 @@ public class TestPages{
 				//System.out.println(sam);
 				byteList.add(byteNode);
 			
+			}
+				
 			
 						
 			byteList.sort(new Comparator<Bytenode>(){
@@ -82,34 +89,51 @@ public class TestPages{
 				
 			});
 			
-			for(Bytenode e : byteList)
+			/*for(Bytenode e : byteList)
 			{
 				byte[] sample = e.val;
 				String getText = new String(sample);
 				//Integer getInt = new Integer(sample);
 				System.out.println(getText);
-			}
+			}*/
+			//byte[] bigArray = new byte[1024];
+			//ByteBuffer target = ByteBuffer.wrap(bigArray);
+			byte [] fill = new byte[Storage.pageSize];
+			int bytesread = 8;
 			for(Bytenode e : byteList){
-				byte[] fill = e.val;
-				relationConsumerIterator.putTupleInStorage(fill);
+				
+				System.arraycopy(e.val, 0, fill, bytesread, e.val.length);
+				//target.put(e.val);
+				bytesread = bytesread + e.val.length;
+				
+
 			} 
+			
+			
+			//target.get(fill);
+			//System.out.println(fill);
+			getpagefromrelationiter.writeDataInStorage(fill);
+			//relationConsumerIterator.putTupleInStorage(fill);
 		} 
-*/	
+	
+		/* 
+		 * The above getpagefromrelationiterator.hasNext() performs the following :
+		 * 
+		 * It opens the iterator to initialize one buffer , reads the contents of the first page on to the buffer, sorts them internally 
+		 * writes it back onto the disc tuple by tuple (should be changed to writing the whole buffer onto the page) pass target onto puttupleinstorage func
+		 * 
+		 * hasnext checks for next page and does the same process for the next page
+		 * */
 		
-		
-		relationConsumerIterator = new PutTupleInRelationIterator(t.getLength(),storageName);
-		relationConsumerIterator.open();
+
 		
 		// the while loop below will sort records in a given buffer
 		
 	/*	while(getpagefromrelationiter.hasNext()){
 			List<Bytenode> byteList = new ArrayList<Bytenode>();
 			byte[] page = getpagefromrelationiter.next();
-			byte[] getcount = new byte[4];
-			for(int i=0; i<4; i++){
-				getcount[i] = page[i];
-			}
-			int count = ByteBuffer.wrap(getcount).getInt();
+			
+			int count = getpagefromrelationiter.getTupleCount(page);
 			System.out.println("count :" + count);
 			int bytesread = 8;
 			
@@ -151,8 +175,8 @@ public class TestPages{
 				relationConsumerIterator.putTupleInStorage(fill);
 			} 
 		}
-*/		
 		
+*/		
 		System.out.println("Number of pages before passing to create runs : " + numPages);
 		// testing create runs before sorting it initially
 		

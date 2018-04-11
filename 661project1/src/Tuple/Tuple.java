@@ -163,6 +163,7 @@ public class Tuple {
 		for(int ii = 0; ii < this.keyLength; ii++){
 
 			int pos = this.keyBytes[ii];
+			//System.out.println("Pos value:" + pos);
 			
 			if((one[pos] & 0x0FF) < (two[pos] & 0x0FF)){
 				return -1;

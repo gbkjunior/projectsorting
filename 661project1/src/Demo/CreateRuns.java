@@ -18,7 +18,7 @@ public class CreateRuns{
 	static int numPages;
 	byte [][] byteMatrix;
 	int lastindex;
-	
+	int count=0;
 	Tuple t = new Tuple();
 	//Storage s = new Storage();
 	
@@ -35,8 +35,9 @@ public class CreateRuns{
 		System.out.println("Processing Pass - 1 "+"no: of Pages read - "+numPages+" no of Pages written - "+numPages);
 		System.out.println();
 		
-		proiter.open2();
-		run();
+		proiter.open1();
+		//run();
+		System.out.println("Last sort page: " + getLastSortPage(numPages));
 		SortMergeIters iter = new SortMergeIters(getLastSortPage(numPages),numPages,numBuffers);
 		
 	}
@@ -45,25 +46,26 @@ public class CreateRuns{
 	{
 		List<Bytenode> byteList = new ArrayList<Bytenode>();
 		
-			byte [] getcount = new byte[4];
+			/*byte [] getcount = new byte[4];
 			for(int i=0; i<4; i++){
 				getcount[i] = bufferMatrix[i];
 			}
 			int count = ByteBuffer.wrap(getcount).getInt();
-			System.out.println("count :" + count);
+			System.out.println("count :" + count);*/
 			int bytesread = 8;
 			
-			for(int i=0 ; i<count; i++){
+			for(int i=0 ; i<proiter.tupleCountBuffer[count]; i++){
 				byte[] val = new byte[t.getLength()];
 				
 				val = proiter.next1();
 				
 				byte[] key = val;
 				
-				bytesread = bytesread + t.getLength();
+				//bytesread = bytesread + t.getLength();
 				Bytenode bytenode = new Bytenode(key,val);
 				byteList.add(bytenode);
 			}
+			count++;
 			byteList.sort(new Comparator<Bytenode>(){
 
 				@Override
@@ -106,6 +108,11 @@ public class CreateRuns{
 	
 	public void run() throws Exception{
 		byteMatrix = new byte[numBuffers][];
+		/*for(int i=0;i<numBuffers;i++)
+		{
+			ByteBuffer target = ByteBuffer.wrap(proiter.bufferMatrix[i]);
+			target.put(proiter.bufferMatrix[i]);
+		}*/
 		
 		for(int j=0; j<numPages;){
 		    /*for(int i=0; i<numBuffers; i++){
@@ -115,8 +122,8 @@ public class CreateRuns{
 		for(int i=0; i<numBuffers; i++){
 			if(j<numPages){
 				//while(proiter.hasNext1())
-				
-				proiter.bufferMatrix[i] = sortTuplesInBuffer(proiter.bufferMatrix[i]);
+				//count = 0;
+				//proiter.bufferMatrix[i] = sortTuplesInBuffer(proiter.bufferMatrix[i]);
 				
 				/*TestPages.s1.ReadPage(startpage+j, byteMatrix[i]);
 				byteMatrix[i] = sortTuplesInBuffer(byteMatrix[i]);*/
@@ -188,7 +195,7 @@ public class CreateRuns{
 		
 		for(int j=0; j<=lastindex; j++){
 			for(int i=0; i<4; i++){
-				count[i] = proiter.bufferMatrix[j][i];
+				count[i] = proiter.openBuffer[i];
 			}
 			
 			countval = ByteBuffer.wrap(count).getInt();
